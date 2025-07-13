@@ -1,1 +1,82 @@
-<p>home works!</p>
+<!-- <p>home works!</p> -->
+
+
+<div  style=" margin: 15px 15px 0 15px; " >
+
+  <div 
+    style="text-align: center;"
+  
+  >
+  <h2>  Control de notificaciones  </h2>
+
+  </div>
+
+
+  <div style="
+  display: flex;
+  justify-content: space-between;
+  ">
+
+    <mat-form-field>
+      <mat-label>Lista</mat-label>
+      <mat-select [(ngModel)]="selectedDevice">
+        <mat-option *ngFor="let device of devices" [value]="device">{{ device }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="1er color" [(ngModel)]="input1" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="2do color" [(ngModel)]="input2" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput placeholder="3er color" [(ngModel)]="input3" />
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="save()">GUARDAR</button>
+  </div>
+
+  <!-- Table -->
+  <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <ng-container matColumnDef="device">
+      <mat-header-cell *matHeaderCellDef> Dispositivo </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.device }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="color1">
+      <mat-header-cell *matHeaderCellDef> 1 </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.color1 }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="color2">
+      <mat-header-cell *matHeaderCellDef> 2 </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.color2 }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="color3">
+      <mat-header-cell *matHeaderCellDef> 3 </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.color3 }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef> Acciones </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <button mat-stroked-button color="primary" (click)="edit(element)">EDIT</button>
+        <button mat-stroked-button color="warn" (click)="delete(element)">DELETE</button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+  </mat-table>
+
+  <!-- Bottom Button -->
+  <div style="margin-top: 10px;">
+    <button mat-raised-button color="accent" (click)="sendToAll()">Enviar a todos</button>
+  </div>
+</div>
