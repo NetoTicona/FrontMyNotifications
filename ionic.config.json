@@ -1,0 +1,7 @@
+{
+  "name": "send-notification-master",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
