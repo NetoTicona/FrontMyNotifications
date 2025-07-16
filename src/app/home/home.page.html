@@ -1,5 +1,18 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-toggle>
+        <ion-button 
+          fill="clear" 
+          class="circle-button">
+          <ion-icon 
+            name="menu" 
+            color="primary">
+          </ion-icon>
+        </ion-button>
+      </ion-menu-toggle>
+    </ion-buttons>
+    
     <ion-title>
       Blank
     </ion-title>
@@ -7,14 +20,168 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Configuraciónes</ion-card-title>
+     
+    </ion-card-header>
+  
+    <ion-card-content>
+      <!-- Input de texto con icono -->
+      <ion-item button id="name-trigger">
+ 
+        <ion-input
+          type="text"
+          placeholder="Juan Pérez"
+          label="Cantidad de colores:"
+          label-placement="floating"
+      
+          readonly
+        >
+        </ion-input>
+        <ion-icon name="chevron-down" slot="end"></ion-icon>
+      </ion-item>
+    
+      <ion-popover trigger="name-trigger" trigger-action="click">
+        <ng-template>
+          <ion-content>
+            <ion-list>
+              <ion-item button (click)="selectName('Juan Pérez')">
+                <ion-label>3</ion-label>
+              </ion-item>
+              <ion-item button (click)="selectName('María González')">
+                <ion-label>6</ion-label>
+              </ion-item>
+              <ion-item button (click)="selectName('Carlos Rodríguez')">
+                <ion-label>9</ion-label>
+              </ion-item>
+              <ion-item button (click)="selectName('Ana Martínez')">
+                <ion-label>12</ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+         
+      <!-- Input de email con validación -->
+      <ion-item>
+       
+        <ion-input
+          type="email"
+          placeholder=""
+          label="Duración de transiciones(s):"
+          label-placement="floating"
+         
+        >
+        </ion-input>
+      </ion-item>
+         
+      <!-- Input de password -->
+      <ion-item>
+        
+        <ion-input
+          type="text"
+          placeholder=""
+          label="Ciclos:"
+          label-placement="floating"
+         
+        >
+        </ion-input>
+      </ion-item>
+    </ion-card-content>
+
+  </ion-card>
+
+  
+  <ion-card>
+
+  
+    <ion-card-content>
+      <!-- Input de texto con icono -->
+      <ion-item button id="user-trigger">
+ 
+        <ion-input
+          type="text"
+          placeholder=""
+          label="Usuarios conectados:"
+          label-placement="floating"
+      
+          readonly
+        >
+        </ion-input>
+        <ion-icon name="chevron-down" slot="end"></ion-icon>
+      </ion-item>
+    
+      <ion-popover trigger="user-trigger" trigger-action="click">
+        <ng-template>
+          <ion-content>
+            <ion-list>
+              <ion-item button (click)="selectName('Juan Pérez')">
+                <ion-label>Usu 3</ion-label>
+              </ion-item>
+              <ion-item button (click)="selectName('María González')">
+                <ion-label>Usu 6</ion-label>
+              </ion-item>
+              <ion-item button (click)="selectName('Carlos Rodríguez')">
+                <ion-label>Usu 9</ion-label>
+              </ion-item>
+              <ion-item button (click)="selectName('Ana Martínez')">
+                <ion-label>USus  12</ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+         
+
+      
+    </ion-card-content>
+
+  </ion-card>
+
+
+
 </ion-content>
+
+<ion-footer>
+
+  <ion-toolbar color="light" >
+
+    <ion-button
+      
+    detail
+    class="cart-button"
+    
+    expand="block"
+    fill="solid"
+ 
+   
+  >
+
+  <ng-container  >
+    
+    
+    <span  style="position: absolute; right: 16px" >
+      Cobrar <ion-icon
+      style="transform: scale(1.5);"
+      name="arrow-dropright"
+    ></ion-icon>
+  </span>
+
+  </ng-container>
+
+
+
+
+    
+
+
+
+  </ion-button>
+
+
+</ion-toolbar>
+
+
+</ion-footer>

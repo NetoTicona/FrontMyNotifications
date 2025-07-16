@@ -1,3 +1,53 @@
+<!-- app.component.html -->
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <!-- MENÚ LATERAL -->
+  <ion-menu contentId="main-content">
+
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Menu 1 Content</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+
+    <ion-content class="ion-padding">
+      <ion-list>
+        <!-- Elementos del menú -->
+        <ion-item 
+          *ngFor="let item of menuItems" 
+          button 
+          (click)="navigate(item.url)"
+          lines="none"
+        >
+          <ion-icon [name]="item.icon" slot="start"></ion-icon>
+          <ion-label>{{ item.title }}</ion-label>
+        </ion-item>
+        
+        <!-- Resultado visible del menú:
+             - Home (con icono home)
+             - Reporte (con icono document-text)
+        -->
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="ion-page" id="main-content">
+    
+
+    <!-- <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Menu 2</ion-title>
+      </ion-toolbar>
+    </ion-header>
+ -->
+
+
+    <ion-content class="ion-padding">
+      <ion-router-outlet></ion-router-outlet>
+    </ion-content>
+  </div>
 </ion-app>
