@@ -17,5 +17,9 @@ export const routes: Routes = [
   {
     path: 'report',
     loadComponent: () => import('./report/report.page').then( m => m.ReportPage)
+  },  {
+    path: 'regresive-counter',
+    loadComponent: () => import('./regresive-counter/regresive-counter.page').then( m => m.RegresiveCounterPage)
   },
+
 ];
