@@ -5,11 +5,12 @@ import {
   IonLabel, IonInput, IonItem, IonCard, IonCardContent, IonCardTitle, IonCardHeader, IonList, IonPopover
 } from '@ionic/angular/standalone';
 import { grid, home, documentText, menu, chevronDown, create, trash } from 'ionicons/icons';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView } from '@ionic/angular/standalone';
 import usersSequences from './data';
 import { StorageServiceService } from '../services/storage-service.service';
+import { IonToast } from '@ionic/angular/standalone';
 
 
 
@@ -22,7 +23,7 @@ import { StorageServiceService } from '../services/storage-service.service';
   imports: [
     IonHeader, CommonModule, IonToolbar, IonTitle, IonContent, IonMenuButton, IonMenuToggle, IonButton, IonIcon, IonButtons,
     IonLabel, IonInput, IonItem, IonCard, IonCardContent, IonCardTitle, IonCardHeader, IonList, IonPopover,
-     ReactiveFormsModule, IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView
+    ReactiveFormsModule, IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView, FormsModule, IonToast
   ],
 })
 export class HomePage implements OnInit {
@@ -30,10 +31,18 @@ export class HomePage implements OnInit {
   selectedUserId: string = '';
   testDataForm: FormGroup;
   userSequenceDataForm: FormGroup;
-  selectTabs = 'CONF';
-  usersSequences: any = usersSequences;
+  selectTabs = 'first';
+  usersSequences: any = [];
   isConfigSaved = false;
   colorOptions: any[] = [];
+  isToastOpen = false;
+  toastMessage = '';
+  toastButtons = [
+    {
+      text: 'OK',
+      role: 'cancel',
+    }
+  ];
   listUsers = [
     { id: 55, user: 'carlitos', iddevice: 100 },
     { id: 6, user: 'esteban', iddevice: 101 },
@@ -49,17 +58,18 @@ export class HomePage implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private storageService: StorageServiceService,
-    private cdr:ChangeDetectorRef
+    private cdr: ChangeDetectorRef
+
   ) {
-    addIcons({ 
-      grid, 
-      home, 
-      'document-text': documentText, 
-      menu, 
-      'chevron-down': chevronDown, 
-      create, 
+    addIcons({
+      grid,
+      home,
+      'document-text': documentText,
+      menu,
+      'chevron-down': chevronDown,
+      create,
       trash,
-     
+
     });
 
     this.testDataForm = this._fb.group({
@@ -105,7 +115,7 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit(): void {
-
+    console.log("nOnInit");
     const savedConfig = this.storageService.getConfig();
     if (savedConfig) {
       this.isConfigSaved = true;
@@ -137,9 +147,65 @@ export class HomePage implements OnInit {
 
 
 
-
-
   }
+
+  ionViewWillEnter() {
+    console.log("onViewWillEnter");
+
+
+    this.selectTabs = 'first';
+    // Load config if exists
+
+    const savedConfig = this.storageService.getConfig();
+    if (savedConfig) {
+      this.loadConfigIntoForm(savedConfig);
+      this.isConfigSaved = true;
+      this.colorOptions = savedConfig.color;
+    }
+
+    // Refresh sequences list
+    this.usersSequences = this.storageService.getSequences();
+    if (this.usersSequences.length > 0) {
+      console.log("Disable!!!");
+
+      this.disableTestDataForm();
+      this.setOpenToast(true, "You must delete all sequences before modifying the configuration.");
+    } else {
+      this.enableTestDataForm();
+    }
+  }
+
+  private disableTestDataForm() {
+    // Disable only specific controls that should be locked when sequences exist
+    /*     this.testDataForm.get('cicles')?.enable({ onlySelf: true });
+        this.testDataForm.get('transitionTime')?.enable({ onlySelf: true });
+        this.testDataForm.get('selectNumber')?.enable({ onlySelf: true }); */
+
+    // Disable all color inputs in the FormArray
+    const colourDetailArray = this.colourDetailForm;
+    colourDetailArray.controls.forEach((group: AbstractControl) => {
+      if (group instanceof FormGroup) {
+        group.get('color')?.disable({ onlySelf: true });
+      }
+    });
+  }
+
+
+  private enableTestDataForm() {
+    // Enable the controls that should be editable
+    /* this.testDataForm.get('cicles')?.enable({ onlySelf: true });
+    this.testDataForm.get('transitionTime')?.enable({ onlySelf: true });
+    this.testDataForm.get('selectNumber')?.enable({ onlySelf: true }); */
+
+    // Enable all color inputs in the FormArray
+    const colourDetailArray = this.colourDetailForm;
+    colourDetailArray.controls.forEach((group: AbstractControl) => {
+      if (group instanceof FormGroup) {
+        group.get('color')?.enable({ onlySelf: true });
+      }
+    });
+  }
+
 
   setSelectNumber(value: number, popover: any) {
 
@@ -158,7 +224,7 @@ export class HomePage implements OnInit {
   selectSequenceColor(index: number, color: string, popover: any) {
     // Establece el valor en el FormArray
     this.sequenceDetailForm.at(index).get('sequence')?.setValue(color);
-    
+
     // Cierra el popover
     popover.dismiss();
     this.cdr.detectChanges();
@@ -206,9 +272,7 @@ export class HomePage implements OnInit {
   }
 
   saveSequence() {
-
     Object.keys(this.userSequenceDataForm.controls).forEach((key) => {
-
       const control = this.userSequenceDataForm.get(key);
       if (control instanceof FormArray) {
         control.controls.forEach((ctrl) => ctrl.markAllAsTouched());
@@ -217,16 +281,12 @@ export class HomePage implements OnInit {
       }
     });
 
-
     if (this.userSequenceDataForm.valid) {
       const formValue = this.userSequenceDataForm.value;
-
       const output = {
-
-
         iduser: formValue.selectedUserId,
         iddevice: formValue.iddevice,
-
+        username: formValue.selectedUserName,
         sequence: formValue.sequenceDetail.map((item: any, index: number) => ({
           order: index + 1,
           color: item.sequence
@@ -236,34 +296,119 @@ export class HomePage implements OnInit {
       this.storageService.saveSequence(output);
       this.usersSequences = this.storageService.getSequences();
 
-      console.log(" Enviear Sequencia:");
-      console.log(JSON.stringify(output, null, 2));
-    } else {
-      console.log("❌ Formulario inválido");
-    }
+      // Reset the form after saving
+      this.userSequenceDataForm.reset();
+      this.sequenceDetailForm.clear();
 
+      // Remove selected user from listUsers if it exists
+      this.listUsers = this.listUsers.filter(user => user.id !== formValue.selectedUserId);
+
+      console.log("✅ Sequence saved:", JSON.stringify(output, null, 2));
+    } else {
+      console.log("❌ Invalid form");
+    }
+  }
+
+  private loadConfigIntoForm(config: any) {
+    this.testDataForm.patchValue({
+      cicles: config.cicles,
+      transitionTime: config.transitionTime
+    });
+
+    // Set selectNumber and create color inputs
+    this.testDataForm.get('selectNumber')?.setValue(config.color.length);
+
+    const colourDetail = this.colourDetailForm;
+    colourDetail.clear();
+    config.color.forEach((colorObj: any) => {
+      colourDetail.push(this._fb.group({
+        color: [colorObj.color, Validators.required]
+      }));
+    });
   }
 
 
-  segmentChanged(e: Event) {
-    console.log("e: ", e);
+
+  segmentChanged(e: any) {
+    if (e.detail.value === 'third') {
+      this.usersSequences = this.storageService.getSequences();
+      this.cdr.detectChanges();
+    }
 
 
   }
 
 
   editUser(user: any) {
+    // Switch to second tab
+    this.selectTabs = 'second';
 
+    // Populate the form
+    this.userSequenceDataForm.patchValue({
+      selectedUserId: user.iduser,
+      selectedUserName: user.username,
+      iddevice: user.iddevice,
+      counterSequence: user.sequence.length
+    });
+
+    // Set up sequence inputs
+    const sequenceDetail = this.sequenceDetailForm;
+    sequenceDetail.clear();
+    user.sequence.forEach((seq: any) => {
+      sequenceDetail.push(this._fb.group({
+        sequence: [seq.color, Validators.required]
+      }));
+    });
+
+    // Remove from sequences list (will be re-added if saved)
+    this.deleteUser(user);
   }
 
 
   deleteUser(user: any) {
+    const sequences = this.storageService.getSequences();
+    const updatedSequences = sequences.filter(seq => seq.iduser !== user.iduser);
+    localStorage.setItem(this.storageService['SEQUENCES_KEY'], JSON.stringify(updatedSequences));
+    this.usersSequences = updatedSequences;
+
+    // Add user back to available list if not already there
+    if (!this.listUsers.some(u => u.id === user.iduser)) {
+      this.listUsers.push({
+        id: user.iduser,
+        user: user.username,
+        iddevice: user.iddevice
+      });
+    }
+
+    // If no more sequences, enable the form
+    if (this.usersSequences.length === 0) {
+      this.enableTestDataForm();
+    }
+  }
+
+
+  startSequence() {
+    const testForm = this.testDataForm.value;
+    
+    const req = {
+      date: testForm.date,
+      cicles: testForm.cicles,
+      transitionTime: testForm.transitionTime,
+      usersSequences: this.usersSequences
+    }
+
+    console.log("envioTest: ", req );
+    
+
 
   }
 
 
-  addNewUserSequence() {
-
+  setOpenToast(isOpen: boolean, message?: string) {
+    this.isToastOpen = isOpen;
+    if (message) {
+      this.toastMessage = message;
+    }
   }
 
 

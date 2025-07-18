@@ -7,22 +7,23 @@
         </ion-button>
       </ion-menu-toggle>
     </ion-buttons>
-    <ion-title> {{ isConfigSaved }} </ion-title>
+    <ion-title>  </ion-title>
   </ion-toolbar>
 
   <ion-toolbar>
-    <ion-segment>
+
+    <ion-segment [(ngModel)]="selectTabs" (ionChange)="segmentChanged($event)">
       <ion-segment-button value="first" content-id="first">
         <ion-label>conf.</ion-label>
       </ion-segment-button>
-      <ion-segment-button value="second" content-id="second"  [class.disabled-segment]="!isConfigSaved" >
+      <ion-segment-button value="second" content-id="second" [class.disabled-segment]="!isConfigSaved" [disabled]="!isConfigSaved">
         <ion-label>secuen.</ion-label>
       </ion-segment-button>
-      <ion-segment-button value="third" content-id="third"  [class.disabled-segment]="!isConfigSaved" >
+      <ion-segment-button value="third" content-id="third" [class.disabled-segment]="!isConfigSaved" [disabled]="!isConfigSaved">
         <ion-label>lista</ion-label>
       </ion-segment-button>
-      
     </ion-segment>
+
   </ion-toolbar>
 
 
@@ -39,14 +40,14 @@
 
     <ion-segment-content class="segment-content" id="first">
 
-      <ion-card>
+      <ion-card  >
         <ion-card-header>
           <ion-card-title>Configuraciónes generales</ion-card-title>
         </ion-card-header>
 
         <ion-card-content [formGroup]="testDataForm">
 
-          <ion-item button id="name-trigger">
+          <ion-item [class.disabled-card]="usersSequences.length > 0" button id="name-trigger">
             <ion-input type="text" placeholder="Juan Pérez" label="Cantidad de colores:" label-placement="floating"
               formControlName="selectNumber" readonly>
             </ion-input>
@@ -195,7 +196,7 @@
         <ion-item lines="full" color="light">
           <ion-label class="table-header usuario">Usuario</ion-label>
           <ion-label class="table-header secuencia">Secuencia</ion-label>
-          <ion-label class="table-header acciones" slot="end">Acciones</ion-label>
+          <ion-label class="table-header acciones" slot="end">Accion</ion-label>
         </ion-item>
 
 
@@ -224,7 +225,7 @@
       </ion-list>
 
       <div class="fixed-bottom">
-        <ion-button expand="block" color="success" (click)="addNewUserSequence()">
+        <ion-button expand="block" color="success" (click)="startSequence()">
           Start
         </ion-button>
       </div>
@@ -245,3 +246,12 @@
 
 
 </ion-content>
+
+
+<ion-toast
+  [isOpen]="isToastOpen"
+  [duration]="3000"
+  [message]="toastMessage"
+  [buttons]="toastButtons"
+  (didDismiss)="setOpenToast(false)"
+></ion-toast>

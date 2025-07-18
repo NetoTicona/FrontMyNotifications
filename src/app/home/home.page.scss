@@ -137,3 +137,12 @@ ion-item.user-row {
   &.secuencia { width: 50%; }
   &.acciones { width: 20%; }
 }
+//----------//
+.disabled-card {
+  opacity: 0.7;
+  pointer-events: none;
+  
+  ion-input, ion-item {
+    --background: #f5f5f5;
+  }
+}
