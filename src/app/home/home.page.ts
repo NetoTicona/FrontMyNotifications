@@ -37,6 +37,7 @@ export class HomePage implements OnInit {
   colorOptions: any[] = [];
   isToastOpen = false;
   toastMessage = '';
+  isColorInputsReadonly = false;
   toastButtons = [
     {
       text: 'OK',
@@ -169,41 +170,45 @@ export class HomePage implements OnInit {
       console.log("Disable!!!");
 
       this.disableTestDataForm();
-      this.setOpenToast(true, "You must delete all sequences before modifying the configuration.");
+      this.setOpenToast(true, "Para cambiar los colores base debe borrar la lista de usuarios.");
     } else {
       this.enableTestDataForm();
     }
   }
 
   private disableTestDataForm() {
+    this.isColorInputsReadonly = true;
     // Disable only specific controls that should be locked when sequences exist
     /*     this.testDataForm.get('cicles')?.enable({ onlySelf: true });
         this.testDataForm.get('transitionTime')?.enable({ onlySelf: true });
         this.testDataForm.get('selectNumber')?.enable({ onlySelf: true }); */
 
     // Disable all color inputs in the FormArray
-    const colourDetailArray = this.colourDetailForm;
+    /* const colourDetailArray = this.colourDetailForm;
     colourDetailArray.controls.forEach((group: AbstractControl) => {
       if (group instanceof FormGroup) {
         group.get('color')?.disable({ onlySelf: true });
       }
-    });
+    }); */
+    this.cdr.detectChanges();
   }
 
 
   private enableTestDataForm() {
+    this.isColorInputsReadonly = false;
     // Enable the controls that should be editable
     /* this.testDataForm.get('cicles')?.enable({ onlySelf: true });
     this.testDataForm.get('transitionTime')?.enable({ onlySelf: true });
     this.testDataForm.get('selectNumber')?.enable({ onlySelf: true }); */
 
     // Enable all color inputs in the FormArray
-    const colourDetailArray = this.colourDetailForm;
+    /* const colourDetailArray = this.colourDetailForm;
     colourDetailArray.controls.forEach((group: AbstractControl) => {
       if (group instanceof FormGroup) {
         group.get('color')?.enable({ onlySelf: true });
       }
-    });
+    }); */
+    this.cdr.detectChanges();
   }
 
 
@@ -245,6 +250,8 @@ export class HomePage implements OnInit {
 
     if (this.testDataForm.valid) {
       const formValue = this.testDataForm.value;
+      console.log("SaveConf: ", formValue );
+      
 
       const output = {
 
@@ -335,6 +342,21 @@ export class HomePage implements OnInit {
       this.cdr.detectChanges();
     }
 
+    if( e.detail.value === 'first' ){
+      console.log("Disable!!!");
+
+      this.usersSequences = this.storageService.getSequences();
+      if (this.usersSequences.length > 0) {
+        console.log("Disable!!!");
+  
+        this.disableTestDataForm();
+        this.setOpenToast(true, "Para cambiar los colores base debe borrar la lista de usuarios.");
+      } else {
+        this.enableTestDataForm();
+      }
+      
+    }
+
 
   }
 
@@ -389,16 +411,23 @@ export class HomePage implements OnInit {
 
   startSequence() {
     const testForm = this.testDataForm.value;
+
+    if( this.usersSequences.length > 0 ){
+      const req = {
+        date: testForm.date,
+        cicles: testForm.cicles,
+        transitionTime: testForm.transitionTime,
+        usersSequences: this.usersSequences
+      }
+         console.log("envioTest: ", req );
     
-    const req = {
-      date: testForm.date,
-      cicles: testForm.cicles,
-      transitionTime: testForm.transitionTime,
-      usersSequences: this.usersSequences
+    }else{
+      this.setOpenToast(true, "No usuarios a enviar secuencia.");
     }
 
-    console.log("envioTest: ", req );
-    
+
+
+ 
 
 
   }
