@@ -2,186 +2,246 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-toggle>
-        <ion-button 
-          fill="clear" 
-          class="circle-button">
-          <ion-icon 
-            name="menu" 
-            color="primary">
-          </ion-icon>
+        <ion-button fill="clear" class="circle-button">
+          <ion-icon name="menu" color="primary"></ion-icon>
         </ion-button>
       </ion-menu-toggle>
     </ion-buttons>
-    
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title> {{ isConfigSaved }} </ion-title>
   </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-segment>
+      <ion-segment-button value="first" content-id="first">
+        <ion-label>conf.</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="second" content-id="second"  [class.disabled-segment]="!isConfigSaved" >
+        <ion-label>secuen.</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="third" content-id="third"  [class.disabled-segment]="!isConfigSaved" >
+        <ion-label>lista</ion-label>
+      </ion-segment-button>
+      
+    </ion-segment>
+  </ion-toolbar>
+
+
+
+
+
+
 </ion-header>
 
 <ion-content [fullscreen]="true">
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Configuraciónes</ion-card-title>
-     
-    </ion-card-header>
-  
-    <ion-card-content>
-      <!-- Input de texto con icono -->
-      <ion-item button id="name-trigger">
- 
-        <ion-input
-          type="text"
-          placeholder="Juan Pérez"
-          label="Cantidad de colores:"
-          label-placement="floating"
-      
-          readonly
-        >
-        </ion-input>
-        <ion-icon name="chevron-down" slot="end"></ion-icon>
-      </ion-item>
-    
-      <ion-popover trigger="name-trigger" trigger-action="click">
-        <ng-template>
-          <ion-content>
-            <ion-list>
-              <ion-item button (click)="selectName('Juan Pérez')">
-                <ion-label>3</ion-label>
-              </ion-item>
-              <ion-item button (click)="selectName('María González')">
-                <ion-label>6</ion-label>
-              </ion-item>
-              <ion-item button (click)="selectName('Carlos Rodríguez')">
-                <ion-label>9</ion-label>
-              </ion-item>
-              <ion-item button (click)="selectName('Ana Martínez')">
-                <ion-label>12</ion-label>
-              </ion-item>
-            </ion-list>
-          </ion-content>
-        </ng-template>
-      </ion-popover>
-         
-      <!-- Input de email con validación -->
-      <ion-item>
-       
-        <ion-input
-          type="email"
-          placeholder=""
-          label="Duración de transiciones(s):"
-          label-placement="floating"
-         
-        >
-        </ion-input>
-      </ion-item>
-         
-      <!-- Input de password -->
-      <ion-item>
-        
-        <ion-input
-          type="text"
-          placeholder=""
-          label="Ciclos:"
-          label-placement="floating"
-         
-        >
-        </ion-input>
-      </ion-item>
-    </ion-card-content>
 
-  </ion-card>
+  <ion-segment-view class="segment-view">
 
-  
-  <ion-card>
+    <ion-segment-content class="segment-content" id="first">
 
-  
-    <ion-card-content>
-      <!-- Input de texto con icono -->
-      <ion-item button id="user-trigger">
- 
-        <ion-input
-          type="text"
-          placeholder=""
-          label="Usuarios conectados:"
-          label-placement="floating"
-      
-          readonly
-        >
-        </ion-input>
-        <ion-icon name="chevron-down" slot="end"></ion-icon>
-      </ion-item>
-    
-      <ion-popover trigger="user-trigger" trigger-action="click">
-        <ng-template>
-          <ion-content>
-            <ion-list>
-              <ion-item button (click)="selectName('Juan Pérez')">
-                <ion-label>Usu 3</ion-label>
-              </ion-item>
-              <ion-item button (click)="selectName('María González')">
-                <ion-label>Usu 6</ion-label>
-              </ion-item>
-              <ion-item button (click)="selectName('Carlos Rodríguez')">
-                <ion-label>Usu 9</ion-label>
-              </ion-item>
-              <ion-item button (click)="selectName('Ana Martínez')">
-                <ion-label>USus  12</ion-label>
-              </ion-item>
-            </ion-list>
-          </ion-content>
-        </ng-template>
-      </ion-popover>
-         
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Configuraciónes generales</ion-card-title>
+        </ion-card-header>
 
-      
-    </ion-card-content>
+        <ion-card-content [formGroup]="testDataForm">
 
-  </ion-card>
+          <ion-item button id="name-trigger">
+            <ion-input type="text" placeholder="Juan Pérez" label="Cantidad de colores:" label-placement="floating"
+              formControlName="selectNumber" readonly>
+            </ion-input>
+            <ion-icon name="chevron-down" slot="end"></ion-icon>
+          </ion-item>
+
+          <ion-popover #numberPopover trigger="name-trigger" trigger-action="click">
+            <ng-template>
+              <ion-content>
+                <ion-list>
+                  <ion-item button (click)="setSelectNumber(3, numberPopover )">
+                    <ion-label>3</ion-label>
+                  </ion-item>
+                  <ion-item button (click)="setSelectNumber(6,numberPopover)">
+                    <ion-label>6</ion-label>
+                  </ion-item>
+                  <ion-item button (click)="setSelectNumber(9,numberPopover)">
+                    <ion-label>9</ion-label>
+                  </ion-item>
+                  <ion-item button (click)="setSelectNumber(12,numberPopover)">
+                    <ion-label>12</ion-label>
+                  </ion-item>
+                </ion-list>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+
+          <div id="dynamic-inputs" formArrayName="colourDetail">
+            <ng-container *ngFor="let detail of colourDetailForm.controls; let i = index">
+              <ion-item [formGroupName]="i"
+                [class.invalid]="detail.get('color')?.invalid && detail.get('color')?.touched">
+                <ion-input type="text" placeholder="Color #{{ i + 1 }}" label="Color #{{ i + 1 }}"
+                  label-placement="floating" formControlName="color">
+                </ion-input>
+              </ion-item>
+            </ng-container>
+          </div>
+
+
+          <ion-item [class.invalid]="transitionTime?.invalid && transitionTime?.touched">
+            <ion-input type="email" label="Duración de transiciones(s):" label-placement="floating"
+              formControlName="transitionTime">
+            </ion-input>
+          </ion-item>
+
+          <ion-item [class.invalid]="cicles?.invalid && cicles?.touched">
+            <ion-input type="text" label="Ciclos:" label-placement="floating" formControlName="cicles">
+            </ion-input>
+          </ion-item>
+
+
+
+
+
+        </ion-card-content>
+
+
+      </ion-card>
+
+      <ion-button detail class="cart-button" (click)="saveConf()" expand="block" fill="solid">
+        <ng-container>
+          <span>
+            Guardar conf.
+          </span>
+        </ng-container>
+      </ion-button>
+
+    </ion-segment-content>
+
+    <!-- segundo tab -->
+    <ion-segment-content class="segment-content" id="second">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Usuario-secuencia</ion-card-title>
+        </ion-card-header>
+        <ion-card-content [formGroup]="userSequenceDataForm">
+          <ion-item button id="user-trigger">
+            <ion-input type="text" label="Seleccione usuario:" label-placement="floating"
+              formControlName="selectedUserName" readonly>
+            </ion-input>
+            <ion-icon name="chevron-down" slot="end"></ion-icon>
+          </ion-item>
+
+          <ion-popover #userPopover id="user-popover" trigger="user-trigger" trigger-action="click">
+            <ng-template>
+              <ion-content>
+                <ion-list>
+                  <ion-item *ngFor="let element of listUsers" button (click)="setSelectedUser(element , userPopover )">
+                    <ion-label>{{ element.user }}</ion-label>
+                  </ion-item>
+                </ion-list>
+              </ion-content>
+            </ng-template>
+          </ion-popover>
+
+          <ion-item button id="name-trigger">
+            <ion-input type="number"  label="N° colores en la secuencia:" label-placement="floating"
+              formControlName="counterSequence" >
+            </ion-input>
+          </ion-item>
+
+          <div id="dynamic-inputs-seq" formArrayName="sequenceDetail">
+            <ng-container *ngFor="let sequence of sequenceDetailForm.controls; let i = index">
+              <ion-item [formGroupName]="i" button id="sequence-{{i}}-trigger">
+                <ion-input type="text" placeholder="Sequence #{{ i + 1 }}" label="Sequence #{{ i + 1 }}" 
+                  label-placement="floating" formControlName="sequence" readonly>
+                </ion-input>
+              </ion-item>
+          
+              <ion-popover #sequencePopover trigger="sequence-{{i}}-trigger" trigger-action="click">
+                <ng-template>
+                  <ion-content>
+                    <ion-list>
+                      <ion-item *ngFor="let color of colorOptions" button 
+                        (click)="selectSequenceColor(i, color.color, sequencePopover)">
+                        <ion-label>{{color.color}}</ion-label>
+                        <div slot="end" class="color-preview" [style.background-color]="color.color"></div>
+                      </ion-item>
+                    </ion-list>
+                  </ion-content>
+                </ng-template>
+              </ion-popover>
+            </ng-container>
+          </div>
+
+        </ion-card-content>
+
+        <!--  -->
+      </ion-card>
+
+      <ion-button detail class="cart-button" (click)="saveSequence()" expand="block" fill="solid">
+        <ng-container>
+          <span>
+            Guardar secuencia 
+          </span>
+        </ng-container>
+      </ion-button>
+    </ion-segment-content>
+
+
+    <!-- tercer taBBb -->
+    <ion-segment-content class="segment-content" id="third">
+
+
+      <ion-list>
+        <ion-item lines="full" color="light">
+          <ion-label class="table-header usuario">Usuario</ion-label>
+          <ion-label class="table-header secuencia">Secuencia</ion-label>
+          <ion-label class="table-header acciones" slot="end">Acciones</ion-label>
+        </ion-item>
+
+
+        <ion-item *ngFor="let user of usersSequences" class="user-row">
+          <!-- Columna ID User -->
+          <div class="col-iduser">
+            {{ user.username }}
+          </div>
+
+          <!-- Columna Sequence -->
+          <div class="col-sequence">
+            <div class="color-box" *ngFor="let color of user.sequence" [style.background-color]="color.color">
+            </div>
+          </div>
+
+          <!-- Columna Acciones -->
+          <div class="col-actions">
+            <ion-button fill="solid" (click)="editUser(user)">
+              <ion-icon slot="icon-only" name="create"></ion-icon>
+            </ion-button>
+            <ion-button fill="solid" (click)="deleteUser(user)">
+              <ion-icon slot="icon-only" name="trash"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-item>
+      </ion-list>
+
+      <div class="fixed-bottom">
+        <ion-button expand="block" color="success" (click)="addNewUserSequence()">
+          Start
+        </ion-button>
+      </div>
+
+    </ion-segment-content>
+
+
+
+  </ion-segment-view>
+
+
+
+
+
+
+
 
 
 
 </ion-content>
-
-<ion-footer>
-
-  <ion-toolbar color="light" >
-
-    <ion-button
-      
-    detail
-    class="cart-button"
-    
-    expand="block"
-    fill="solid"
- 
-   
-  >
-
-  <ng-container  >
-    
-    
-    <span  style="position: absolute; right: 16px" >
-      Cobrar <ion-icon
-      style="transform: scale(1.5);"
-      name="arrow-dropright"
-    ></ion-icon>
-  </span>
-
-  </ng-container>
-
-
-
-
-    
-
-
-
-  </ion-button>
-
-
-</ion-toolbar>
-
-
-</ion-footer>

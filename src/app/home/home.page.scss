@@ -49,3 +49,91 @@
   color: #3880ff !important; /* Color primary por defecto de Ionic */
   font-size: 24px;
 }
+
+//----------//
+ion-segment-view {
+  height: 100%;
+}
+
+ion-segment-content {
+
+  height: 100%;
+}
+ion-segment-content:nth-of-type(1) {
+  background: lightpink;
+}
+ion-segment-content:nth-of-type(2) {
+  background: lightblue;
+}
+ion-segment-content:nth-of-type(3) {
+  background: lightgreen;
+}
+//--------------//
+ion-item.user-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+
+  .col-iduser {
+    width: 40%;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .col-sequence {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    align-items: center;
+    min-height: 24px;
+    width: 40%;
+  }
+
+  .color-box {
+    width: 12px; /* Ampliamos un poco visualmente */
+    height: 12px;
+    border-radius: 2px; /* opcional */
+    display: inline-block;
+  }
+
+  .col-actions {
+    width: 20%;
+    display: flex;
+    justify-content: space-around;
+    ion-button {
+      --padding-start: 0;
+      --padding-end: 0;
+    }
+  }
+}
+
+.fixed-bottom {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white; /* o el color de tu fondo */
+  padding: 10px;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* opcional */
+}
+//---------//
+.color-preview {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+}
+
+.disabled-segment {
+  opacity: 0.5 !important;
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+}
+.table-header {
+  font-weight: bold;
+  &.usuario { width: 30%; }
+  &.secuencia { width: 50%; }
+  &.acciones { width: 20%; }
+}
