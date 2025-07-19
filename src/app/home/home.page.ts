@@ -11,6 +11,7 @@ import { IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView } from 
 import usersSequences from './data';
 import { StorageServiceService } from '../services/storage-service.service';
 import { IonToast } from '@ionic/angular/standalone';
+import { Router } from '@angular/router';
 
 
 
@@ -59,7 +60,8 @@ export class HomePage implements OnInit {
   constructor(
     private _fb: FormBuilder,
     private storageService: StorageServiceService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router:Router
 
   ) {
     addIcons({
@@ -420,6 +422,7 @@ export class HomePage implements OnInit {
         usersSequences: this.usersSequences
       }
          console.log("envioTest: ", req );
+         this.router.navigate(['regresive-counter'])
     
     }else{
       this.setOpenToast(true, "No usuarios a enviar secuencia.");

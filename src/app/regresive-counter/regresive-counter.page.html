@@ -1,13 +1,19 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>regresive-counter</ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Video Recorder</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">regresive-counter</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  <div class="counter-container" *ngIf="!isRecording">
+    <div class="counter">{{ counter }}</div>
+  </div>
+
+  <div class="recording-container" *ngIf="isRecording">
+    <video #videoElement autoplay playsinline class="video-preview"></video>
+    <div class="recording-indicator">
+      <ion-icon name="videocam" class="recording-icon"></ion-icon>
+      <div class="recording-text">Recording...</div>
+    </div>
+  </div>
 </ion-content>
