@@ -1,4 +1,4 @@
-<!-- <ion-header>
+<ion-header>
   <ion-toolbar color="primary">
     <ion-title>Recorded Videos</ion-title>
   </ion-toolbar>
@@ -8,10 +8,10 @@
   <ion-list>
     <ion-item *ngFor="let video of videos" (click)="playVideo(video)" button>
       <ion-label>
-        <h2>{{ video.name }}</h2>
-        <p>{{ video.date | date:'medium' }}</p>
+        <h2>{{ video }}</h2>
+ 
       </ion-label>
       <ion-icon name="play" slot="end"></ion-icon>
     </ion-item>
   </ion-list>
-</ion-content> -->
+</ion-content>

@@ -53,6 +53,11 @@ export class AppComponent {
       title: 'Reporte',
       url: '/reporte',
       icon: 'document-text'
+    },
+    {
+      title: 'Videos',
+      url: '/videos-list',
+      icon: 'document-text'
     }
   ];
 

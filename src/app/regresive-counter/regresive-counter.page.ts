@@ -73,9 +73,11 @@ export class RegresiveCounterPage implements OnInit, OnDestroy, AfterViewInit {
 
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: 'environment' // Use back camera
+          facingMode: 'environment', // Use back camera
+          width: { ideal: 1920 },
+          height: { ideal: 1080 }
         },
-        audio: true
+        audio: false
       });
 
       this.videoElement.nativeElement.srcObject = stream;
@@ -97,7 +99,7 @@ export class RegresiveCounterPage implements OnInit, OnDestroy, AfterViewInit {
         await this.videoService.storeVideo(videoBlob);
 
         //this.navCtrl.navigateForward('/videos-list');
-        //this.router.navigate(['videos-list']);
+        this.router.navigate(['videos-list']);
       };
 
       // Start recording and stop after 60 seconds

@@ -46,11 +46,11 @@ export class HomePage implements OnInit {
     }
   ];
   listUsers = [
-    { id: 55, user: 'carlitos', iddevice: 100 },
-    { id: 6, user: 'esteban', iddevice: 101 },
-    { id: 77, user: 'victoria', iddevice: 102 },
-    { id: 8, user: 'francisco', iddevice: 103 },
-    { id: 23, user: 'sigourney', iddevice: 104 }
+    { id: 55, user: 'user 1', iddevice: 100 },
+    { id: 6, user: 'user 2', iddevice: 101 }, 
+    { id: 77, user: 'user 3', iddevice: 102 },
+    { id: 8, user: 'user 4', iddevice: 103 },
+    { id: 23, user: 'user 5', iddevice: 104 }
   ];
 
   get sequenceDetailForm(): FormArray {
@@ -176,6 +176,16 @@ export class HomePage implements OnInit {
     } else {
       this.enableTestDataForm();
     }
+
+    //-------------//
+    //Quitar los usuarios 
+    let listUsersLS = this.storageService.getSequences();
+    this.listUsers = this.listUsers.filter( user =>  !listUsersLS.some( (e:any) => user.id === e.iduser ) );
+    console.log("ListUSers: ", this.listUsers );
+    
+    
+ 
+
   }
 
   private disableTestDataForm() {
@@ -275,6 +285,7 @@ export class HomePage implements OnInit {
 
       console.log("✅ JSON para enviar:");
       console.log(JSON.stringify(output, null, 2));
+      this.setOpenToast(true, "Se guardó los cambios");
     } else {
       console.log("❌ Formulario inválido");
     }
@@ -313,6 +324,7 @@ export class HomePage implements OnInit {
       this.listUsers = this.listUsers.filter(user => user.id !== formValue.selectedUserId);
 
       console.log("✅ Sequence saved:", JSON.stringify(output, null, 2));
+      this.setOpenToast(true, "Se guardó usuario - secuencia.");
     } else {
       console.log("❌ Invalid form");
     }

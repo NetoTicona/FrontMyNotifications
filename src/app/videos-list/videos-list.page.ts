@@ -36,26 +36,24 @@ export class VideosListPage {
 
   constructor(
     private videoService: VideoService,
-    private modalCtrl: ModalController
+  
   ) {}
 
   ionViewWillEnter() {
-    console.log("VideosLISTT onint!");
-    
-    //this.loadVideos();
+    this.loadVideos();
   }
 
   async loadVideos() {
     this.videos = await this.videoService.loadVideos();
+    console.log("los videos: ", this.videos );
+    
   }
 
   async playVideo(video: any) {
-    const modal = await this.modalCtrl.create({
-      component: VideoPlayerPage,
-      componentProps: {
-        videoUrl: await this.videoService.getVideoUrl(video.path)
-      }
-    });
-    await modal.present();
+
+    console.log("PlayVidep");
+    
+
   }
+
 }

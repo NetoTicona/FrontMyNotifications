@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Preferences } from '@capacitor/preferences';
+import { Capacitor } from '@capacitor/core';
 
 @Injectable({
   providedIn: 'root',
@@ -29,11 +30,18 @@ export class VideoService {
 
     const base64 = await this.convertBlobToBase64(blob);
 
-    await Filesystem.writeFile({
-      path: fileName,
-      data: base64,
-      directory: Directory.Documents,
-    });
+    // Check if running on desktop
+    if (Capacitor.getPlatform() === 'web') {
+      // Desktop-specific handling
+      await this.saveToDesktop(fileName, base64);
+    } else {
+      // Mobile handling (original behavior)
+      await Filesystem.writeFile({
+        path: fileName,
+        data: base64,
+        directory: Directory.Documents,
+      });
+    }
 
     // Add new video to the beginning of the list
     this.videos.unshift(fileName);
@@ -43,11 +51,28 @@ export class VideoService {
       value: JSON.stringify(this.videos),
     });
 
-    console.log('[VideoService] Video saved and listedf: ', {
-      key: this.VIDEOS_KEY,
-      value: JSON.stringify(this.videos),
-    } );
+    console.log('[VideoService] Video saved and listed.');
   }
+
+  private async saveToDesktop(fileName: string, base64Data: string): Promise<void> {
+    try {
+      // For desktop, we'll use the Downloads directory
+      await Filesystem.writeFile({
+        path: fileName,
+        data: base64Data,
+        directory: Directory.External,
+      });
+    } catch (error) {
+      console.error('Error saving to desktop:', error);
+      // Fallback to Documents if Downloads fails
+      await Filesystem.writeFile({
+        path: fileName,
+        data: base64Data,
+        directory: Directory.Documents,
+      });
+    }
+  }
+
 
   /**
    * Get the full base64 video data for display or playback.
@@ -55,7 +80,7 @@ export class VideoService {
   async getVideoUrl(fileName: string): Promise<string> {
     const file = await Filesystem.readFile({
       path: fileName,
-      directory: Directory.Data,
+      directory: Directory.Documents,
     });
 
     return `data:video/webm;base64,${file.data}`;
