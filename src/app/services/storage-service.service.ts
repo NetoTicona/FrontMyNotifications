@@ -34,4 +34,10 @@ export class StorageServiceService {
     localStorage.removeItem(this.CONFIG_KEY);
     localStorage.removeItem(this.SEQUENCES_KEY);
   }
+
+  clearSequence(){
+    localStorage.removeItem(this.SEQUENCES_KEY);
+  }
+
+
 }

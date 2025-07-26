@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView } from '@ionic/angular/standalone';
 import { Route, Router } from '@angular/router';
+import { StorageServiceService } from '../services/storage-service.service';
 
 @Component({
   selector: 'app-regresive-counter',
@@ -34,7 +35,7 @@ export class RegresiveCounterPage implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private videoService: VideoService,
-    private navCtrl: NavController,
+    private storageService:StorageServiceService,
     private router:Router
   ) {}
 
@@ -54,6 +55,7 @@ export class RegresiveCounterPage implements OnInit, OnDestroy, AfterViewInit {
         clearInterval(this.countdownInterval);
         // Add a small delay to ensure the DOM has updated after isRecording changes
         setTimeout(() => this.startRecording(), 100);
+        //this.storageService.clearSequence();
       }
     }, 1000);
   }

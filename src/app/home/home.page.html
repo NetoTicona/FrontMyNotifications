@@ -130,38 +130,50 @@
             </ion-input>
             <ion-icon name="chevron-down" slot="end"></ion-icon>
           </ion-item>
-
+          
           <ion-popover #userPopover id="user-popover" trigger="user-trigger" trigger-action="click">
             <ng-template>
               <ion-content>
                 <ion-list>
-                  <ion-item *ngFor="let element of listUsers" button (click)="setSelectedUser(element , userPopover )">
-                    <ion-label>{{ element.user }}</ion-label>
-                  </ion-item>
+                  <!-- When users are available -->
+                  <ng-container *ngIf="listUsers.length > 0">
+                    <ng-container *ngFor="let element of listUsers">
+                      <ion-item button (click)="setSelectedUser(element, userPopover)">
+                        <ion-label>{{ element.user }}</ion-label>
+                      </ion-item>
+                    </ng-container>
+                  </ng-container>
+                  
+                  <!-- When no users are available -->
+                  <ng-container *ngIf="listUsers.length === 0">
+                    <ion-item disabled>
+                      <ion-label color="medium">No hay más usuarios disponibles</ion-label>
+                    </ion-item>
+                  </ng-container>
                 </ion-list>
               </ion-content>
             </ng-template>
           </ion-popover>
-
+          
           <ion-item button id="name-trigger">
-            <ion-input type="number"  label="N° colores en la secuencia:" label-placement="floating"
-              formControlName="counterSequence" >
+            <ion-input type="number" label="N° colores en la secuencia:" label-placement="floating"
+              formControlName="counterSequence">
             </ion-input>
           </ion-item>
-
+          
           <div id="dynamic-inputs-seq" formArrayName="sequenceDetail">
             <ng-container *ngFor="let sequence of sequenceDetailForm.controls; let i = index">
               <ion-item [formGroupName]="i" button id="sequence-{{i}}-trigger">
-                <ion-input type="text" placeholder="Sequence #{{ i + 1 }}" label="Sequence #{{ i + 1 }}" 
-                  label-placement="floating" formControlName="sequence" >
+                <ion-input type="text" placeholder="Sequence #{{ i + 1 }}" label="Sequence #{{ i + 1 }}"
+                  label-placement="floating" formControlName="sequence">
                 </ion-input>
               </ion-item>
-          
+              
               <ion-popover #sequencePopover trigger="sequence-{{i}}-trigger" trigger-action="click">
                 <ng-template>
                   <ion-content>
                     <ion-list>
-                      <ion-item *ngFor="let color of colorOptions" button 
+                      <ion-item *ngFor="let color of colorOptions" button
                         (click)="selectSequenceColor(i, color.color, sequencePopover)">
                         <ion-label>{{color.color}}</ion-label>
                         <div slot="end" class="color-preview" [style.background-color]="color.color"></div>
@@ -172,16 +184,13 @@
               </ion-popover>
             </ng-container>
           </div>
-
         </ion-card-content>
-
-        <!--  -->
       </ion-card>
-
+      
       <ion-button detail class="cart-button" (click)="saveSequence()" expand="block" fill="solid">
         <ng-container>
           <span>
-            Guardar secuencia 
+            Guardar secuencia
           </span>
         </ng-container>
       </ion-button>

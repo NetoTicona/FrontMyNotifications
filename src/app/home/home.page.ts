@@ -12,6 +12,7 @@ import usersSequences from './data';
 import { StorageServiceService } from '../services/storage-service.service';
 import { IonToast } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
+import { DatabaseService } from '../services/database.service';
 
 
 
@@ -45,13 +46,15 @@ export class HomePage implements OnInit {
       role: 'cancel',
     }
   ];
-  listUsers = [
+ /*  listUsers = [
     { id: 55, user: 'user 1', iddevice: 100 },
     { id: 6, user: 'user 2', iddevice: 101 }, 
     { id: 77, user: 'user 3', iddevice: 102 },
     { id: 8, user: 'user 4', iddevice: 103 },
     { id: 23, user: 'user 5', iddevice: 104 }
-  ];
+  ]; */
+
+  listUsers:any = [];
 
   get sequenceDetailForm(): FormArray {
     return this.userSequenceDataForm.get('sequenceDetail') as FormArray;
@@ -61,7 +64,8 @@ export class HomePage implements OnInit {
     private _fb: FormBuilder,
     private storageService: StorageServiceService,
     private cdr: ChangeDetectorRef,
-    private router:Router
+    private router:Router,
+    private dataBaseService:DatabaseService
 
   ) {
     addIcons({
@@ -75,6 +79,7 @@ export class HomePage implements OnInit {
 
     });
 
+   
     this.testDataForm = this._fb.group({
       id: [''],
       date: [''],
@@ -148,16 +153,13 @@ export class HomePage implements OnInit {
       }
     });
 
-
-
   }
 
   ionViewWillEnter() {
-    console.log("onViewWillEnter");
 
+    this.loadConectedUsers();
 
     this.selectTabs = 'first';
-    // Load config if exists
 
     const savedConfig = this.storageService.getConfig();
     if (savedConfig) {
@@ -166,11 +168,9 @@ export class HomePage implements OnInit {
       this.colorOptions = savedConfig.color;
     }
 
-    // Refresh sequences list
     this.usersSequences = this.storageService.getSequences();
     if (this.usersSequences.length > 0) {
       console.log("Disable!!!");
-
       this.disableTestDataForm();
       this.setOpenToast(true, "Para cambiar los colores base debe borrar la lista de usuarios.");
     } else {
@@ -179,12 +179,31 @@ export class HomePage implements OnInit {
 
     //-------------//
     //Quitar los usuarios 
-    let listUsersLS = this.storageService.getSequences();
-    this.listUsers = this.listUsers.filter( user =>  !listUsersLS.some( (e:any) => user.id === e.iduser ) );
-    console.log("ListUSers: ", this.listUsers );
-    
-    
+    /* let listUsersLS = this.storageService.getSequences();
+    this.listUsers = this.listUsers.filter( (user:any) =>  !listUsersLS.some( (e:any) => user.id === e.iduser ) );
+    console.log("ListUSers: ", this.listUsers ); */
+     
  
+
+  }
+
+  loadConectedUsers(){
+
+    this.listUsers = [];
+    this.dataBaseService.getActiveDevices().subscribe( (rpta:any)=>{
+      if( rpta.code == 'OK' ){
+        console.log("RPTA: ",rpta );
+        
+        let listUsersLS = this.storageService.getSequences();
+        let conectedUsers = rpta.data;
+        this.listUsers = conectedUsers.filter( (user:any) =>  !listUsersLS.some( (e:any) => user.id === e.iduser ) );
+
+        return;
+      }
+
+    } ,err=>{
+      this.setOpenToast(true,"Error al obtener usuarios conectados");
+    } )
 
   }
 
@@ -321,7 +340,7 @@ export class HomePage implements OnInit {
       this.sequenceDetailForm.clear();
 
       // Remove selected user from listUsers if it exists
-      this.listUsers = this.listUsers.filter(user => user.id !== formValue.selectedUserId);
+      this.listUsers = this.listUsers.filter((user:any) => user.id !== formValue.selectedUserId);
 
       console.log("✅ Sequence saved:", JSON.stringify(output, null, 2));
       this.setOpenToast(true, "Se guardó usuario - secuencia.");
@@ -358,6 +377,8 @@ export class HomePage implements OnInit {
 
     if( e.detail.value === 'first' ){
       console.log("Disable!!!");
+
+      //this.loadConectedUsers();
 
       this.usersSequences = this.storageService.getSequences();
       if (this.usersSequences.length > 0) {
@@ -408,7 +429,7 @@ export class HomePage implements OnInit {
     this.usersSequences = updatedSequences;
 
     // Add user back to available list if not already there
-    if (!this.listUsers.some(u => u.id === user.iduser)) {
+    if (!this.listUsers.some( (u:any) => u.id === user.iduser)) {
       this.listUsers.push({
         id: user.iduser,
         user: user.username,
@@ -424,6 +445,7 @@ export class HomePage implements OnInit {
 
 
   startSequence() {
+
     const testForm = this.testDataForm.value;
 
     if( this.usersSequences.length > 0 ){
@@ -434,8 +456,26 @@ export class HomePage implements OnInit {
         usersSequences: this.usersSequences
       }
          console.log("envioTest: ", req );
-         this.router.navigate(['regresive-counter'])
-    
+        // this.router.navigate(['regresive-counter']);
+
+        this.dataBaseService.sendNotificationsData( req ).subscribe( (rpta:any)=>{
+          if( rpta.code == "OK" ){
+            let stats = rpta.stats;
+
+            let msm = `se envio correctamente a ${stats.success} / ${stats.total}.`;
+            this.setOpenToast(true,msm);
+
+            return;
+          }
+
+
+        }, err=>{
+          this.setOpenToast(true,"Error");
+
+        } );
+
+
+
     }else{
       this.setOpenToast(true, "No usuarios a enviar secuencia.");
     }
