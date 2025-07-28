@@ -21,7 +21,7 @@ import { Router } from '@angular/router';
 export class DatabaseService {
   private readonly nTimeout: number = 45000;
   private readonly nRetry: number = 5;
-  private readonly apiUrl = "http://apinoti.thenett0.com"; // Asume que tienes esto en environment
+  private readonly apiUrl = "https://apinoti.thenett0.com"; // Asume que tienes esto en environment
 
   constructor(
     private http: HttpClient,
